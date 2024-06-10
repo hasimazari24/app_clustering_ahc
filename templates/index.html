@@ -13,7 +13,7 @@
     <script src="{{ url_for('static', filename='bootstrap-5.3.3-dist/js/jquery-3.7.1.min.js') }}"></script>
 </head>
 
-<body>
+<body class="d-flex flex-column min-vh-100">
     <header>
         <div class="py-2 bg-dark text-white">
             <div class="container">
@@ -121,12 +121,52 @@
 
     </header>
     {% block content %}
-    <main>
+    <main class="flex-fill">
 
     </main>
     {% endblock %}
 
-
+    <footer class="mt-auto">
+        <div class="py-2 bg-dark text-white">
+            <div class="container">
+                <div class="d-flex flex-wrap align-items-center justify-content-between my-3">
+                    <a href="/" class="mb-3 me-2 mb-md-0 text-muted text-decoration-none lh-1">
+                        <!-- <i class="bi bi-bootstrap-fill fs-4">&nbsp;&nbsp;</i> -->
+                        <img src="{{ url_for('static', filename='logo-white.png') }}" class="fs-4" width="23"
+                            height="23">&nbsp;&nbsp;
+                        <span class="text-white">&copy; 2024 Sistem Pengelompokan Produksi Padi dan Beras. All Rights
+                            Reserved</span>
+                    </a>
+                    <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+                        <li>
+                            <a href="mailto:hasimazari24@gmail.com" target="_blank"
+                                class="ms-3 text-white d-flex flex-column align-items-center">
+                                <i class="bi bi-envelope-at fs-4"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.facebook.com/hasyiemt.azharie" target="_blank"
+                                class="ms-3 text-white d-flex flex-column align-items-center">
+                                <i class="bi bi-facebook fs-4"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.instagram.com/hasyimazari/" target="_blank"
+                                class="ms-3 text-white d-flex flex-column align-items-center">
+                                <i class="bi bi-instagram fs-4"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://github.com/hasimazari24/" target="_blank"
+                                class="ms-3 text-white d-flex flex-column align-items-center">
+                                <i class="bi bi-github fs-4"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
 
     <!-- Bootstrap JS -->
 
