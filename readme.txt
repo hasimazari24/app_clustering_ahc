@@ -13,4 +13,9 @@ mematikan : deactivate
 Install dependencies:
 pip install -r requirements.txt
 
+jalankan flask :
+python -m flask run
 
+kalau error terkait werkzeug, turunkan versinya:
+pip uninstall werkzeug
+pip install werkzeug==2.2.2
