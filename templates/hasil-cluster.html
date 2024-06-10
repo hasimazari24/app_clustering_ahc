@@ -1,0 +1,151 @@
+{% extends 'index.html' %}
+
+{% block title %}Hasil Cluster{% endblock %}
+
+{% block content %}
+
+<div class="container py-3">
+    <div class="d-flex align-items-center">
+        <h1 class="fw-bold me-3">Hasil Cluster</h1>
+    </div>
+    <hr>
+    <div class="d-grid">
+        <button class="btn btn-success btn-lg mb-3" type="button" data-bs-toggle="collapse"
+            data-bs-target="#clustertahun" aria-expanded="false" aria-controls="clustertahun">
+            <i class="bi bi-arrow-down-square"></i>
+            <span>Hasil Cluster Per Tahun</span>
+        </button>
+    </div>
+    <div class="collapse mb-3" id="clustertahun">
+        <div class="card card-body border-success">
+            {% if cls and cls|length > 0 %}
+            <nav>
+                <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                    {% for row in cls %}
+                    <button class="nav-link {% if loop.index == 1 %} active {% endif %}" id="nav-{{ row[0] }}-tab"
+                        data-bs-toggle="tab" data-bs-target="#nav-{{ row[0] }}" type="button" role="tab"
+                        aria-controls="nav-{{ row[0] }}" aria-selected="true">Tahun {{ row[1] }}</button>
+                    {% endfor %}
+                </div>
+            </nav>
+            <div class="tab-content" id="nav-tabContent">
+                {% for row in cls %}
+                <div class="tab-pane fade show {% if loop.index == 1 %} active {% endif %}" id="nav-{{ row[0] }}"
+                    role="tabpanel" aria-labelledby="nav-{{ row[0] }}-tab" tabindex="0">
+                    <div class="py-3">
+                        {% if row[3] is not none and row[3] > 1 %}
+                        <div class="dropdown-item d-flex align-items-center gap-3 text-wrap mt-0">
+                            <span class="bg-success rounded-circle d-inline-block"
+                                style="width: .5em; height: .5em; min-width: .5em; min-height: .5em;"></span>
+                            <span>Keanggotaan Cluster :</span>
+                        </div>
+                        <div class="table-responsive mt-3">
+                            <table class="table table-bordered table-hover w-full">
+                                <thead>
+                                    <tr class="align-middle text-center">
+                                        <!-- <th>No</th> -->
+                                        <th>Cluster</th>
+                                        <th>Anggota Cluster</th>
+                                        <th>Jumlah Anggota</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for row_content in cls_c[row[2]] %}
+                                    <tr>
+                                        <!-- <td>{{ loop.index }}</td> -->
+                                        <td style="max-width: 50px;width: 50px;">{{ row_content[0] }}</td>
+                                        <td style="max-width: 500px;min-width: 300px;">{{ row_content[1] }}
+                                        </td>
+                                        <td style="max-width: 100px;width: 100px;">{{ row_content[2] }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="dropdown-item d-flex align-items-center gap-3 text-wrap mt-2">
+                            <span class="bg-success rounded-circle d-inline-block"
+                                style="width: .5em; height: .5em; min-width: .5em; min-height: .5em;"></span>
+                            <span>Karakteristik Cluster :</span>
+                        </div>
+                        <div class="table-responsive mt-3">
+                            <table class="table table-bordered table-hover w-auto">
+                                <thead>
+                                    <tr class="align-middle text-center">
+                                        <!-- <th>No</th> -->
+                                        <th>Cluster</th>
+                                        <th>Rata-rata Produksi Padi</th>
+                                        <th>Rata-rata Produksi Beras</th>
+                                        <th>Keterangan</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for row_content in cls_c[row[2]] %}
+                                    <tr>
+                                        <!-- <td>{{ loop.index }}</td> -->
+                                        <td>{{ row_content[0] }}</td>
+                                        <td style="text-align: right; max-width: 150px; width: 150px;">
+                                            {{ row_content[3] }}</td>
+                                        <td style="text-align: right; max-width: 150px; width: 150px;">
+                                            {{ row_content[4] }}</td>
+                                        <td>{{ row_content[5] }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="dropdown-item d-flex align-items-center gap-3 text-wrap mt-2">
+                            <span class="bg-success rounded-circle d-inline-block"
+                                style="width: .5em; height: .5em; min-width: .5em; min-height: .5em;"></span>
+                            <span>Visualisasi Pemetaan Cluster :</span>
+                        </div>
+                        <img src="{{ url_for('static', filename='pemetaan/' ~ 'download (4).png') }}" class="img-fluid">
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center"><i>Hasil cluster masih kosong.</i></div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="d-grid">
+        <button class="btn btn-primary btn-lg mb-3" type="button" data-bs-toggle="collapse"
+            data-bs-target="#clusterakhir" aria-expanded="false" aria-controls="clusterakhir">
+            <i class="bi bi-arrow-down-square"></i>
+            <span>Hasil Cluster Akhir</span>
+        </button>
+    </div>
+    <div class="collapse mb-3" id="clusterakhir">
+        <div class="card card-body border-primary">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr class="text-center">
+                            <th>No</th>
+                            <th>Kabupaten/Kota</th>
+                            {% for col in columns[1:] %}
+                            <th>{{ col }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in data %}
+                        <tr class="text-center">
+                            <td>{{ loop.index }}</td>
+                            <td>{{ row['kabupaten_kota'] }}</td>
+                            {% for col in columns[1:] %}
+                            <td>{{ row[col] if col in row else '' }}</td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

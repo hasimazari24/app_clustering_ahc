@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Hugo 0.88.1">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="icon" href="{{ url_for('static', filename='logo.ico') }}" type="image/x-icon">
+    <link href="{{ url_for('static', filename='bootstrap-5.3.3-dist/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='bootstrap-5.3.3-dist/icons/bootstrap-icons.min.css') }}"
+        rel="stylesheet">
+    <script src="{{ url_for('static', filename='bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='bootstrap-5.3.3-dist/js/jquery-3.7.1.min.js') }}"></script>
+
+    <style>
+        .bd-placeholder-img {
+            font-size: 1.125rem;
+            text-anchor: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            user-select: none;
+        }
+
+        @media (min-width: 768px) {
+            .bd-placeholder-img-lg {
+                font-size: 3.5rem;
+            }
+        }
+
+        body {
+            display: flex;
+            align-items: center;
+            padding-top: 40px;
+            padding-bottom: 40px;
+            background-color: #f5f5f5;
+        }
+
+        .form-signin {
+            width: 100%;
+            max-width: 330px;
+            padding: 15px;
+            margin: auto;
+        }
+
+        .form-signin .checkbox {
+            font-weight: 400;
+        }
+
+        .form-signin .form-floating:focus-within {
+            z-index: 2;
+        }
+
+        .form-signin input[type="email"] {
+            margin-bottom: -1px;
+            border-bottom-right-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+
+        .form-signin input[type="password"] {
+            margin-bottom: 10px;
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+        }
+    </style>
+
+
+    <!-- Custom styles for this template -->
+    <!-- <link href="signin.css" rel="stylesheet"> -->
+</head>
+
+<body class="text-center">
+
+    <main class="form-signin">
+        <form id="login">
+            <img class="mb-4" src="{{ url_for('static', filename='logo.ico') }}" alt="" width="72" height="72">
+            <h1 class="h3 mb-3 fw-normal">Please Sign In</h1>
+
+            <div class="form-floating">
+                <input type="text" class="form-control" id="username" placeholder="Masukkan username" required>
+                <label for="floatingInput">Username</label>
+            </div>
+            <div class="form-floating">
+                <input type="password" class="form-control" id="password" placeholder="Masukkan password" required>
+                <label for="floatingPassword">Password</label>
+            </div>
+            <button class="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
+            <p class="mt-5 mb-3 text-muted">&copy; 2024</p>
+        </form>
+
+        <!-- Modal Pesan -->
+        <div class="modal fade" id="messageModal" tabindex="-1" role="dialog" aria-labelledby="messageModalLabel"
+            aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header justify-content-center">
+                        <div class="modal-title d-flex flex-column align-items-center fs-3 text-center"></div>
+                        <!-- <h1 class="modal-title fs-5" id="exampleModalLabel"></h1> -->
+                    </div>
+                    <div class="modal-body fs-6 text-center">
+                        <!-- {{ modal_message }} -->
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+</body>
+
+<script>
+    $(document).ready(function () {
+        $('#login').submit(function (event) {
+            event.preventDefault();
+            var username = document.getElementById('username').value;
+            var password = document.getElementById('password').value;
+            $.ajax({
+                url: '/login',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    'username': username,
+                    'password': password
+                }),
+                success: function (response) {
+                    $('#messageModal').find('.modal-title').html(
+                        '<span class="bi bi-check-circle text-success"> Sukses!</span>'
+                    );
+                    $('#messageModal').find('.modal-body').text(response.message);
+                    $('#messageModal').find('.modal-footer').html(
+                        '<a href="/" type="button" class="btn btn-success" data-dismiss="modal">OK</a>'
+                    );
+                    $('#messageModal').modal('show');
+                },
+                error: function (xhr, status, error) {
+                    var errorMessage = xhr.responseJSON.error;
+                    $('#messageModal').find('.modal-title').html(
+                        '<span class="bi bi-exclamation-triangle text-danger"> Gagal!</span>'
+                    );
+                    $('#messageModal').find('.modal-body').text('Terjadi kesalahan: ' +
+                        errorMessage);
+                    $('#messageModal').find('.modal-footer').html(
+                        '<button type="button" class="btn btn-danger" data-bs-dismiss="modal">OK</button>'
+                    );
+                    $('#messageModal').modal('show');
+                }
+            });
+        });
+
+    })
+</script>
+
+</html>

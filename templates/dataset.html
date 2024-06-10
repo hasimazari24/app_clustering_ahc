@@ -1,0 +1,350 @@
+{% extends 'index.html' %}
+
+{% block title %}Dataset{% endblock %}
+
+{% block content %}
+<div class="container py-3">
+    <div class="d-flex align-items-center">
+        <h1 class="fw-bold me-3">Dataset</h1>
+        {% if session['logged_in'] %}
+        <button type="button" class="btn btn-success" id="tambah-dataset" data-bs-toggle="modal"
+            data-bs-target="#addModal" title="Tambah Dataset">
+            <i class="bi bi-plus-square"></i>
+        </button>
+        {% endif %}
+    </div>
+    <hr>
+    {% if dts and dts|length > 0 %}
+    <nav>
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+            {% for row in dts %}
+            <button class="nav-link {% if loop.index == 1 %} active {% endif %}" id="nav-{{ row[0] }}-tab"
+                data-bs-toggle="tab" data-bs-target="#nav-{{ row[0] }}" type="button" role="tab"
+                aria-controls="nav-{{ row[0] }}" aria-selected="true">Tahun {{ row[1] }}</button>
+            {% endfor %}
+        </div>
+    </nav>
+    <div class="tab-content" id="nav-tabContent">
+        {% for row in dts %}
+        <div class="tab-pane fade show {% if loop.index == 1 %} active {% endif %}" id="nav-{{ row[0] }}"
+            role="tabpanel" aria-labelledby="nav-{{ row[0] }}-tab" tabindex="0">
+            <div class="row g-3 py-3">
+                <div class="d-flex flex-md-row flex-column justify-content-between gap-2">
+                    <div>
+                        {% if row[3] != "" or row[3] != null %}
+                        <i>{{ row[3] }}</i>
+                        {% endif %}
+                    </div>
+                    <div class="d-flex align-items-center">
+                        {% if session['logged_in'] %}
+                        <a href="{{ row[2] }}" target="_blank" type="button" class="btn btn-light me-1 edit-dataset"
+                            title="Kunjungi Sumber Dataset" data-id="{{ row[0] }}">
+                            <i class="bi bi-globe"></i>
+                        </a>
+                        <button type="button" class="btn btn-primary me-1 edit-dataset" title="Edit Dataset"
+                            data-id="{{ row[0] }}">
+                            <i class="bi bi-pencil-square"></i>
+                        </button>
+                        <button type="button" class="btn btn-danger hapus-dataset" title="Hapus Dataset"
+                            data-id="{{ row[0] }}">
+                            <i class="bi bi-trash"></i>
+                        </button>
+
+                        {% endif %}
+                    </div>
+                </div>
+
+                <table class="table">
+                    <thead>
+                        <tr class="align-items-center">
+                            <th>No</th>
+                            <th>Kabupaten/Kota</th>
+                            <th>Produksi Padi (Ton)</th>
+                            <th>Produksi Beras (Ton)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row_content in dts_content[row[0]] %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td>{{ row_content[2] }}</td>
+                            <td>{{ row_content[3] }}</td>
+                            <td>{{ row_content[4] }}</td>
+                        </tr>
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endfor %}
+
+    </div>
+    {% else %}
+    <div class="text-center">Dataset masih kosong</div>
+    {% endif %}
+
+    <!-- Modal Add -->
+    <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true"
+        data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addModalLabel">Tambah Dataset</h5>
+                </div>
+                <form id="uploadForm" enctype="multipart/form-data">
+                    <div class="modal-body">
+                        <!-- Form untuk edit data -->
+
+                        <!-- Input fields untuk data pengguna -->
+                        <div class="form-group mb-2">
+                            <label for="tahun">Tahun</label>
+                            <input type="text" class="form-control" id="tahun" name="tahun" required>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label for="sumber">Sumber</label>
+                            <input type="text" class="form-control" id="sumber" name="sumber" required>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="sumber">Keterangan</label>
+                            <input type="text" class="form-control" id="keterangan" name="keterangan" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="file">Pilih file CSV</label>
+                            <input type="file" class="form-control-file" id="file" name="file" accept=".csv" required>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i
+                                class="bi bi-x-lg"></i><span>
+                                Close</span></button>
+                        <button type="submit" class="btn btn-success"><i class="bi bi-floppy"></i>
+                            <span> Simpan</span></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Edit -->
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel"
+        aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Edit Dataset</h5>
+                </div>
+                <form id="editForm" enctype="multipart/form-data">
+                    <div class="modal-body">
+                        <!-- Form untuk edit data -->
+
+                        <!-- Input fields untuk data pengguna -->
+                        <input type="hidden" class="form-control idDataset">
+                        <div class="form-group mb-2">
+                            <label for="tahun">Tahun</label>
+                            <input type="text" class="form-control editTahun" required>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label for="sumber">Sumber</label>
+                            <input type="text" class="form-control editSumber" required>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label for="sumber">Keterangan</label>
+                            <input type="text" class="form-control editKeterangan" required>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i
+                                class="bi bi-x-lg"></i><span>
+                                Close</span></button>
+                        <button type="submit" class="btn btn-primary"><i class="bi bi-floppy"></i>
+                            <span> Simpan Perubahan</span></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Pesan -->
+    <div class="modal fade" id="messageModal" tabindex="-1" role="dialog" aria-labelledby="messageModalLabel"
+        aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header justify-content-center">
+                    <div class="modal-title d-flex flex-column align-items-center fs-3 text-center"></div>
+                    <!-- <h1 class="modal-title fs-5" id="exampleModalLabel"></h1> -->
+                </div>
+                <div class="modal-body fs-6 text-center">
+                    <!-- {{ modal_message }} -->
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Modal Hapus -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form method="post" class="submit-hapus">
+                    <div class="modal-header justify-content-center">
+                        <div class="modal-title d-flex flex-column align-items-center fs-4 text-center">
+                            <span class="bi bi-question-circle">&nbsp;Konfirmasi Hapus</span>
+                        </div>
+                        <!-- <h1 class="modal-title fs-5" id="exampleModalLabel"></h1> -->
+                    </div>
+                    <div class="modal-body fs-6">
+                        Apakah Anda yakin ingin menghapus dataset ini ?
+                        <input type="hidden" class="id-data" />
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-warning ya-hapus" data-bs-dismiss="modal">Ya</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#uploadForm').submit(function (event) {
+            event.preventDefault();
+            var formData = new FormData($(this)[0]);
+
+            $.ajax({
+                url: '/upload',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    $('#messageModal').find('.modal-title').html(
+                        '<span class="bi bi-check-circle text-success"> Sukses!</span>'
+                    );
+                    $('#messageModal').find('.modal-body').text(response.message);
+                    $('#messageModal').find('.modal-footer').html(
+                        '<button type="button" class="btn btn-success" data-dismiss="modal" onclick="location.reload();">OK</button>'
+                    );
+                    $('#messageModal').modal('show');
+                },
+                error: function (xhr, status, error) {
+                    var errorMessage = xhr.responseJSON.error;
+                    $('#messageModal').find('.modal-title').html(
+                        '<span class="bi bi-exclamation-triangle text-danger"> Gagal!</span>'
+                    );
+                    $('#messageModal').find('.modal-body').text('Terjadi kesalahan: ' +
+                        errorMessage);
+                    $('#messageModal').find('.modal-footer').html(
+                        '<button type="button" class="btn btn-danger" data-bs-dismiss="modal">OK</button>'
+                    );
+                    $('#messageModal').modal('show');
+                }
+            });
+        });
+
+        $('.edit-dataset').click(function () {
+            var id_dataset = $(this).data('id');
+            $.ajax({
+                url: '/edit-dataset/' + id_dataset,
+                type: 'GET',
+                success: function (response) {
+                    var datasetH = response.dataset;
+                    $('.idDataset').val(datasetH[0]);
+                    $('.editTahun').val(datasetH[1]);
+                    $('.editSumber').val(datasetH[2]);
+                    $('.editKeterangan').val(datasetH[3]);
+                    $('#editModal').modal('show');
+                },
+                error: function (xhr, status, error) {
+                    console.error(error);
+                }
+            });
+        });
+
+        $('#editForm').submit(function (event) {
+            event.preventDefault();
+            $.ajax({
+                url: '/edit-dataset/' + $('.idDataset').val(),
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    'tahun': $('.editTahun').val(),
+                    'sumber': $('.editSumber').val(),
+                    'keterangan': $('.editKeterangan').val(),
+                }),
+                success: function (response) {
+                    $('#messageModal').find('.modal-title').html(
+                        '<span class="bi bi-check-circle text-success"> Sukses!</span>'
+                    );
+                    $('#messageModal').find('.modal-body').text(response.message);
+                    $('#messageModal').find('.modal-footer').html(
+                        '<button type="button" class="btn btn-success" data-dismiss="modal" onclick="location.reload();">OK</button>'
+                    );
+                    $('#messageModal').modal('show');
+                },
+                error: function (xhr, status, error) {
+                    var errorMessage = xhr.responseJSON.error;
+                    $('#messageModal').find('.modal-title').html(
+                        '<span class="bi bi-exclamation-triangle text-danger"> Gagal!</span>'
+                    );
+                    $('#messageModal').find('.modal-body').text('Terjadi kesalahan: ' +
+                        errorMessage);
+                    $('#messageModal').find('.modal-footer').html(
+                        '<button type="button" class="btn btn-danger" data-bs-dismiss="modal">OK</button>'
+                    );
+                    $('#messageModal').modal('show');
+                }
+            });
+        });
+
+        $('.hapus-dataset').click(function () {
+            $('#deleteModal').modal('show');
+            $('.id-data').val($(this).attr('data-id'));
+            // var userId = $(this).data('id');
+            // document.getElementById("id_user_delete").value = userId;
+        });
+
+        $(".submit-hapus").submit(function (event) {
+            event.preventDefault();
+            var data_id = $('.id-data').val()
+            $.ajax({
+                url: '/hapus_data/' + data_id,
+                type: 'POST',
+                success: function (response) {
+                    $('#messageModal').find('.modal-title').html(
+                        '<span class="bi bi-check-circle text-success"> Sukses!</span>'
+                    );
+                    $('#messageModal').find('.modal-body').text(response.message);
+                    $('#messageModal').find('.modal-footer').html(
+                        '<button type="button" class="btn btn-success" data-dismiss="modal" onclick="location.reload();">OK</button>'
+                    );
+                    $('#messageModal').modal('show');
+                },
+                error: function (xhr, status, error) {
+                    var errorMessage = xhr.responseJSON.error;
+                    $('#messageModal').find('.modal-title').html(
+                        '<span class="bi bi-exclamation-triangle text-danger"> Gagal!</span>'
+                    );
+                    $('#messageModal').find('.modal-body').text('Terjadi kesalahan: ' +
+                        errorMessage);
+                    $('#messageModal').find('.modal-footer').html(
+                        '<button type="button" class="btn btn-danger" data-bs-dismiss="modal">OK</button>'
+                    );
+                    $('#messageModal').modal('show');
+                }
+            });
+        });
+    });
+</script>
+
+
+
+{% endblock %}

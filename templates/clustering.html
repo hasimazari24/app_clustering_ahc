@@ -1,0 +1,451 @@
+{% extends 'index.html' %}
+
+{% block title %}Clustering{% endblock %}
+
+{% block content %}
+
+<div class="container py-3">
+    <div class="d-flex align-items-center">
+        <h1 class="fw-bold me-3">Clustering</h1>
+    </div>
+    <hr>
+    {% if cls and cls|length > 0 %}
+    <nav>
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+            {% for row in cls %}
+            <button class="nav-link {% if loop.index == 1 %} active {% endif %}" id="nav-{{ row[0] }}-tab"
+                data-bs-toggle="tab" data-bs-target="#nav-{{ row[0] }}" type="button" role="tab"
+                aria-controls="nav-{{ row[0] }}" aria-selected="true">Tahun {{ row[1] }}</button>
+            {% endfor %}
+        </div>
+    </nav>
+    <div class="tab-content" id="nav-tabContent">
+        {% for row in cls %}
+        <div class="tab-pane fade show {% if loop.index == 1 %} active {% endif %}" id="nav-{{ row[0] }}"
+            role="tabpanel" aria-labelledby="nav-{{ row[0] }}-tab" tabindex="0">
+            <div class="py-3">
+                {% if row[4] is not none and row[4] != "" %}
+                <div class="d-flex justify-content-end mb-3">
+                    <button type="button" class="btn btn-danger hapus-clustering" title="Hapus Clustering"
+                        data-id="{{ row[2] }}">
+                        <i class="bi bi-trash"></i> Hapus Clustering
+                    </button>
+                </div>
+                {% endif %}
+                <div class="card mb-3">
+                    <h5 class="card-header fw-bold bs-primary-bg-subtle">
+                        1. Korelasi Cophenetic
+                    </h5>
+                    <div class="card-body">
+                        <p class="card-text">Korelasi cophenetic digunakan untuk menentukan algoritma terbaik dalam
+                            metode Agglomerative Hierarchical Clustering (AHC) guna menghasilkan cluster yang optimal.
+                        </p>
+
+                        {% if row[4] is not none %}
+                        <div
+                            class="p-2 text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-3 mt-3">
+                            <i class="bi bi-check2-square"></i><span> Algoritma terbaik pada metode AHC untuk dataset
+                                ini adalah : {{ row[4] }} linkage </span>
+                        </div>
+                        {% else %}
+                        <button type="submit" class="btn btn-primary korelasi" data-id="{{ row[0] }}">
+                            <i class="bi bi-gear"></i>
+                            <span>
+                                Hitung Korelasi
+                            </span>
+                        </button>
+
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="card mb-3">
+                    <h5 class="card-header fw-bold bs-primary-bg-subtle">
+                        2. Diagram Dendogram
+                    </h5>
+                    <div class="card-body">
+                        <!-- <h5 class="card-title">Special title treatment</h5> -->
+                        <p class="card-text">Diagram dendogram adalah diagram hasil dari algoritma terbaik AHC.
+                            Diagram ini digunakan untuk membantu menentukan jumlah cluster. Untuk memastikan jumlah
+                            cluster tersebut sudah optimal, akan diuji melalui silhouette coeficient.</p>
+                        {% if row[4] is not none and row[4] != "" %}
+                        <p> Berikut ini hasil diagram dendogram : </p>
+                        <div class="d-flex flex-md-row flex-column gap-2">
+                            <p class="col-md-8">
+                                <img src="{{ url_for('static', filename='dendogram/' ~ row[5]) }}" class="img-fluid">
+                            </p>
+                            <form class="jmlcluster" id="form{{ row[2] }}">
+                                <div class="form-group mb-3">
+                                    <input type="hidden" value="{{ row[2] }}" name="id-clustering" id="id-clustering">
+                                    <label for="jumcuster">Masukkan jumlah cluster</label>
+
+                                    <input type="text" class="form-control jumcuster" name="jumcuster" id="jumcuster"
+                                        aria-label="jumcuster" required value="{{ row[3] }}" pattern="[0-9]+">
+                                    <div class="invalid-feedback">
+                                        Masukkan jumlah cluster yang valid paling tidak 2 cluster.
+                                    </div>
+                                </div>
+                                <button type="submit"
+                                    class="{% if row[3] >0 %}btn btn-primary{% else %} btn btn-success {% endif %} mb-3 simpan-jum">
+                                    <i class="bi bi-floppy"></i>
+                                    <span class="title">Simpan</span>
+                                </button>
+                            </form>
+                        </div>
+
+                        {% else %}
+                        <i class="text-center">Algoritma AHC belum dipilih. Silahkan lakukan tahap 1 terlebih
+                            dahulu.</i>
+                        {% endif %}
+
+
+                        <p>
+                            <button class="btn btn-light btn-sm" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#dendogram" aria-expanded="false" aria-controls="dendogram">
+                                <i class="bi bi-info-circle"></i>
+                                <span>Tampilkan petunjuk menentukan jumlah cluster melalui diagram dendogram</span>
+                            </button>
+                            <div class="collapse" id="dendogram">
+                                <div class="card card-body">
+                                    <ul>
+                                        <li>Untuk menentukan jumlah
+                                            kluster, kita dapat "memotong" dendrogram pada tingkat
+                                            tertentu. Semua objek yang berada di bawah garis potong yang sama dianggap
+                                            berada dalam kluster yang sama.</li>
+                                        <li>Garis horizontal pada
+                                            dendrogram yang dipotong pada tinggi tertentu akan
+                                            menghasilkan sejumlah kluster yang sesuai dengan jumlah potongan yang
+                                            dihasilkan.</li>
+                                        <li>Berikut ini contoh
+                                            pemotongan diagram dendogram untuk membentuk 4 cluster :
+                                            <ul class="list-unstyled mt-2">
+                                                <li>
+                                                    <img src="{{ url_for('static', filename='dendogram-example.jpg') }}"
+                                                        width="auto" height="400px">
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                    <p>
+
+                                </div>
+                            </div>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card mb-3">
+                    <h5 class="card-header fw-bold bs-primary-bg-subtle">
+                        3. Hasil Clustering
+                    </h5>
+                    <div class="card-body">
+                        {% if row[6] is not none and row[6] > 0.1 %}
+                        <!-- <h5 class="card-title">Special title treatment</h5> -->
+                        <div class="dropdown-item d-flex align-items-center gap-3 text-wrap mt-0">
+                            <span class="bg-success rounded-circle d-inline-block"
+                                style="width: .5em; height: .5em; min-width: .5em; min-height: .5em;"></span>
+                            <span>Clustering berhasil dilakukan dengan uji silhouette coefficient sebesar
+                                <b>{{row[6]}}</b> mendekati 1, hasil clustering sudah baik.</span>
+                        </div>
+                        <div class="dropdown-item d-flex align-items-center gap-3 text-wrap mt-0">
+                            <span class="bg-primary rounded-circle d-inline-block"
+                                style="width: .5em; height: .5em; min-width: .5em; min-height: .5em;"></span>
+                            <span>Berikut ini keanggotaan cluster yang telah berhasil dibentuk dan dapat diatur kategori
+                                setiap cluster :</span>
+                        </div>
+
+                        <div class="table-responsive mt-3">
+                            <table class="table table-bordered table-hover">
+                                <thead>
+                                    <tr class="align-middle text-center">
+                                        <!-- <th>No</th> -->
+                                        <th>Cluster</th>
+                                        <th>Anggota Cluster</th>
+                                        <th>Jumlah Anggota</th>
+                                        <th>Rata-rata Produksi Padi</th>
+                                        <th>Rata-rata Produksi Beras</th>
+                                        <th>Keterangan</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for row_content in cls_c[row[2]] %}
+                                    <tr>
+                                        <!-- <td>{{ loop.index }}</td> -->
+                                        <td>{{ row_content[0] }}</td>
+                                        <td style="max-width: 400px;width: 400px;">{{ row_content[1] }}</td>
+                                        <td style="max-width: 100px;width: 100px;">{{ row_content[2] }}</td>
+                                        <td style="text-align: right; max-width: 150px; width: 150px;">
+                                            {{ "%.2f" | format(row_content[3]) }}
+                                        </td>
+                                        <td style="text-align: right; max-width: 150px; width: 150px;">
+                                            {{ "%.2f" | format(row_content[4]) }}</td>
+                                        <td><select class="form-select keterangan" data-id_clustering="{{ row[2] }}"
+                                                data-cluster="{{ row_content[0] }}">
+                                                <option value=""
+                                                    {% if row_content[5] == '' or row_content[5] is none %}selected{% endif %}
+                                                    disabled>
+                                                    Pilih Kategori
+                                                </option>
+                                                <option value="Sangat Tinggi"
+                                                    {% if row_content[5] == 'Sangat Tinggi' %}selected{% endif %}>
+                                                    Sangat Tinggi
+                                                </option>
+                                                <option value="Tinggi"
+                                                    {% if row_content[5] == 'Tinggi' %}selected{% endif %}>
+                                                    Tinggi
+                                                </option>
+                                                <option value="Sedang"
+                                                    {% if row_content[5] == 'Sedang' %}selected{% endif %}>
+                                                    Sedang
+                                                </option>
+                                                <option value="Rendah"
+                                                    {% if row_content[5] == 'Rendah' %}selected{% endif %}>
+                                                    Rendah
+                                                </option>
+                                                <option value="Sangat Rendah"
+                                                    {% if row_content[5] == 'Sangat Rendah' %}selected{% endif %}>
+                                                    Sangat Rendah
+                                                </option>
+                                            </select></td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        {% else %}
+                        <i class="text-center">Hasil clustering belum bisa ditampilkan.</i>
+                        {% endif %}
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+        {% endfor %}
+
+    </div>
+    {% else %}
+    <div class="text-center">Dataset masih kosong</div>
+    {% endif %}
+</div>
+
+<!-- Modal Pesan -->
+<div class="modal fade" id="messageModal" tabindex="-1" role="dialog" aria-labelledby="messageModalLabel"
+    aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header justify-content-center">
+                <div class="modal-title d-flex flex-column align-items-center fs-3 text-center"></div>
+                <!-- <h1 class="modal-title fs-5" id="exampleModalLabel"></h1> -->
+            </div>
+            <div class="modal-body fs-6 text-center">
+                <!-- {{ modal_message }} -->
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Modal Hapus -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form method="post" class="submit-hapus">
+                <div class="modal-header justify-content-center">
+                    <div class="modal-title d-flex flex-column align-items-center fs-4 text-center">
+                        <span class="bi bi-question-circle">&nbsp;Konfirmasi Hapus</span>
+                    </div>
+                    <!-- <h1 class="modal-title fs-5" id="exampleModalLabel"></h1> -->
+                </div>
+                <div class="modal-body fs-6">
+                    Apakah Anda yakin ingin menghapus hasil clustering dari dataset ini ?
+                    <input type="hidden" class="id-data" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-warning ya-hapus" data-bs-dismiss="modal">Ya</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        function changeButtonState(buttonElement, iconClass, titleText, disabledState) {
+            // Menonaktifkan atau mengaktifkan tombol
+            $(buttonElement).prop('disabled', disabledState);
+            // Mengubah ikon
+            $(buttonElement).find('i').removeClass().addClass(iconClass);
+            // Mengubah teks
+            $(buttonElement).find('.title').text(titleText);
+        }
+
+        $('.korelasi').click(function () {
+            var id_dataset = $(this).data('id');
+            changeButtonState(this, 'loading-icon bi-arrow-repeat', 'Sedang Diproses', true);
+
+            $.ajax({
+                url: '/clustering_korelasi/' + id_dataset,
+                type: 'POST',
+                success: function (response) {
+                    $('#messageModal').find('.modal-title').html(
+                        '<span class="bi bi-check-circle text-success"> Sukses!</span>'
+                    );
+                    $('#messageModal').find('.modal-body').text(response.message);
+                    $('#messageModal').find('.modal-footer').html(
+                        '<button type="button" class="btn btn-success" data-dismiss="modal" onclick="location.reload();">OK</button>'
+                    );
+                    $('#messageModal').modal('show');
+                },
+                error: function (xhr, status, error) {
+                    changeButtonState('.korelasi', 'loading-icon bi-arrow-repeat',
+                        'Hitung Korelasi', false);
+
+                    var errorMessage = xhr.responseJSON.error;
+                    $('#messageModal').find('.modal-title').html(
+                        '<span class="bi bi-exclamation-triangle text-danger"> Gagal!</span>'
+                    );
+                    $('#messageModal').find('.modal-body').text('Terjadi kesalahan: ' +
+                        errorMessage);
+                    $('#messageModal').find('.modal-footer').html(
+                        '<button type="button" class="btn btn-danger" data-bs-dismiss="modal">OK</button>'
+                    );
+                    $('#messageModal').modal('show');
+                }
+            });
+        });
+
+        $('.jmlcluster').submit(function (event) {
+            event.preventDefault();
+            changeButtonState('.simpan-jum', 'loading-icon bi-arrow-repeat', 'Sedang Diproses', true);
+            // Dapatkan id form yang disubmit
+            var formId = $(this).attr('id');
+            $.ajax({
+                url: '/clustering_jumlah/',
+                type: 'POST',
+                // contentType: 'application/json',
+                data: $('#' + formId).serialize(), // Serialize form data
+                success: function (response) {
+                    changeButtonState('.simpan-jum', 'bi bi-floppy',
+                        'Simpan',
+                        false);
+                    $('#messageModal').find('.modal-title').html(
+                        '<span class="bi bi-check-circle text-success"> Sukses!</span>'
+                    );
+                    $('#messageModal').find('.modal-body').text(response.message);
+                    $('#messageModal').find('.modal-footer').html(
+                        '<button type="button" class="btn btn-success" data-dismiss="modal" onclick = "location.reload();">OK</button>'
+                    );
+                    $('#messageModal').modal('show');
+                },
+                error: function (xhr, status, error) {
+                    changeButtonState('.simpan-jum', 'bi bi-floppy',
+                        'Simpan',
+                        false);
+                    var errorMessage = xhr.responseJSON.error;
+                    $('#messageModal').find('.modal-title').html(
+                        '<span class="bi bi-exclamation-triangle text-danger"> Gagal!</span>'
+                    );
+                    $('#messageModal').find('.modal-body').text('Terjadi kesalahan: ' +
+                        errorMessage);
+                    $('#messageModal').find('.modal-footer').html(
+                        '<button type="button" class="btn btn-danger" data-bs-dismiss="modal">OK</button>'
+                    );
+                    $('#messageModal').modal('show');
+                }
+            });
+        })
+
+        $('.keterangan').change(function () {
+            var id_clustering = $(this).data('id_clustering');
+            var cluster = $(this).data('cluster');
+            var keterangan = $(this).val();
+            $('.keterangan').prop('disabled', true);
+            $.ajax({
+                url: '/clustering_keterangan/' + id_clustering,
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    cluster: cluster,
+                    keterangan: keterangan
+                }),
+                success: function (response) {
+                    $('.keterangan').prop('disabled', false);
+                    $('#messageModal').find('.modal-title').html(
+                        '<span class="bi bi-check-circle text-success"> Sukses!</span>'
+                    );
+                    $('#messageModal').find('.modal-body').text(response.message);
+                    $('#messageModal').find('.modal-footer').html(
+                        '<button type="button" class="btn btn-success" data-dismiss="modal" onclick="location.reload();">OK</button>'
+                    );
+                    $('#messageModal').modal('show');
+                },
+                error: function (xhr, status, error) {
+                    $('.keterangan').prop('disabled', false);
+                    var errorMessage = xhr.responseJSON.error;
+                    $('#messageModal').find('.modal-title').html(
+                        '<span class="bi bi-exclamation-triangle text-danger"> Gagal!</span>'
+                    );
+                    $('#messageModal').find('.modal-body').text('Terjadi kesalahan: ' +
+                        errorMessage);
+                    $('#messageModal').find('.modal-footer').html(
+                        '<button type="button" class="btn btn-danger" data-bs-dismiss="modal">OK</button>'
+                    );
+                    $('#messageModal').modal('show');
+                }
+            });
+        })
+
+        $('.hapus-clustering').click(function () {
+            $('#deleteModal').modal('show');
+            $('.id-data').val($(this).attr('data-id'));
+            // var userId = $(this).data('id');
+            // document.getElementById("id_user_delete").value = userId;
+        });
+
+        $(".submit-hapus").submit(function (event) {
+            event.preventDefault();
+            var data_id = $('.id-data').val()
+            $.ajax({
+                url: '/hapus_clustering/' + data_id,
+                type: 'POST',
+                success: function (response) {
+                    $('#messageModal').find('.modal-title').html(
+                        '<span class="bi bi-check-circle text-success"> Sukses!</span>'
+                    );
+                    $('#messageModal').find('.modal-body').text(response.message);
+                    $('#messageModal').find('.modal-footer').html(
+                        '<button type="button" class="btn btn-success" data-dismiss="modal" onclick="location.reload();">OK</button>'
+                    );
+                    $('#messageModal').modal('show');
+                },
+                error: function (xhr, status, error) {
+                    var errorMessage = xhr.responseJSON.error;
+                    $('#messageModal').find('.modal-title').html(
+                        '<span class="bi bi-exclamation-triangle text-danger"> Gagal!</span>'
+                    );
+                    $('#messageModal').find('.modal-body').text('Terjadi kesalahan: ' +
+                        errorMessage);
+                    $('#messageModal').find('.modal-footer').html(
+                        '<button type="button" class="btn btn-danger" data-bs-dismiss="modal">OK</button>'
+                    );
+                    $('#messageModal').modal('show');
+                }
+            });
+        });
+
+        function isValidNumber(value) {
+            // Memeriksa apakah nilai adalah angka dan hanya memiliki satu titik desimal
+            return !isNaN(value) && /^\d+$/.test(value);
+        }
+
+    })
+</script>
+
+{% endblock %}

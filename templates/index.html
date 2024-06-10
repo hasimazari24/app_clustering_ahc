@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="icon" href="{{ url_for('static', filename='logo.ico') }}" type="image/x-icon">
+    <link href="{{ url_for('static', filename='bootstrap-5.3.3-dist/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='bootstrap-5.3.3-dist/icons/bootstrap-icons.min.css') }}"
+        rel="stylesheet">
+    <script src="{{ url_for('static', filename='bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='bootstrap-5.3.3-dist/js/jquery-3.7.1.min.js') }}"></script>
+</head>
+
+<body>
+    <header>
+        <div class="py-2 bg-dark text-white">
+            <div class="container">
+                <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+                    <a href="/"
+                        class="d-flex align-items-center my-2 my-lg-0 me-lg-auto text-white text-decoration-none">
+                        <!-- <i class="bi bi-bootstrap-fill fs-4">&nbsp;&nbsp;</i> -->
+                        <img src="{{ url_for('static', filename='logo-white.png') }}" class="fs-4" width="23"
+                            height="23">&nbsp;&nbsp;
+                        <span class="fs-5">Sistem Pengelompokan Produksi Padi dan Beras</span>
+                    </a>
+
+                    <ul class="nav col-12 col-lg-auto my-2 justify-content-center my-md-0 text-small">
+                        <li>
+                            <a href="/" class="nav-link text-white d-flex flex-column align-items-center">
+                                <i class="bi bi-house-door fs-5"></i>
+                                <span class="mx-auto">Home</span>
+                            </a>
+
+                        </li>
+                        {% if session['logged_in'] %}
+                        <li>
+                            <a href="#"
+                                class="nav-link dropdown-toggle text-white d-flex flex-column align-items-center"
+                                id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                <i class="bi bi-gear fs-5"></i>
+                                <span class="mx-auto">Kelola</span>
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                <li>
+                                    <a class="dropdown-item d-flex gap-2 align-items-center" href="/data-user">
+                                        <i class="bi bi-person-vcard fs-5"></i>
+                                        <span>Data User</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item d-flex gap-2 align-items-center" href="/dataset">
+                                        <i class="bi bi-database-gear fs-5"></i>
+                                        <span>Dataset</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item d-flex gap-2 align-items-center" href="/clustering">
+                                        <i class="bi bi-ui-radios-grid fs-5"></i>
+                                        <span>Clustering</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        {% else %}
+                        <li>
+                            <a class="nav-link text-white d-flex flex-column align-items-center" href="/dataset">
+                                <i class="bi bi-database-gear fs-5"></i>
+                                <span>Dataset</span>
+                            </a>
+                        </li>
+                        {% endif %}
+                        <li>
+                            <a class="nav-link text-white d-flex flex-column align-items-center" href="/hasil-cluster">
+                                <i class="bi bi-grid-3x3 fs-5"></i>
+                                <span>Hasil Cluster</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/about" class="nav-link text-white d-flex flex-column align-items-center">
+                                <i class="bi bi-info-square fs-5"></i>
+                                <span class="mx-auto">About</span>
+                            </a>
+                        </li>
+                        {% if session['logged_in'] %}
+                        <li>
+                            <a href="#"
+                                class="nav-link dropdown-toggle text-white d-flex flex-column align-items-center"
+                                id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                <i class="bi bi-person-circle fs-5"></i>
+                                <span class="mx-auto">Admin</span>
+                            </a>
+                            <ul class="dropdown-menu justify-content-center" aria-labelledby="navbarDropdownMenuLink">
+                                <li>
+                                    <span class="dropdown-item d-flex align-items-center gap-2 py-2">
+                                        <span class="d-inline-block bg-success rounded-circle"
+                                            style="width: .5em; height: .5em;"></span>
+                                        Anda Login sebagai {{ session['fullname'] }}
+                                    </span>
+                                </li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li>
+                                    <a class="dropdown-item d-flex align-items-center gap-2 py-2" style="color: red;"
+                                        href="/logout">
+                                        <i class="bi bi-box-arrow-in-right fs-5"></i>
+                                        <span>Log Out</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </header>
+    {% block content %}
+    <main>
+
+    </main>
+    {% endblock %}
+
+
+
+    <!-- Bootstrap JS -->
+
+</body>
+
+</html>
