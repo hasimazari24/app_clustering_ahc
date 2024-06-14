@@ -15,7 +15,8 @@
             {% for row in cls %}
             <button class="nav-link {% if loop.index == 1 %} active {% endif %}" id="nav-{{ row[0] }}-tab"
                 data-bs-toggle="tab" data-bs-target="#nav-{{ row[0] }}" type="button" role="tab"
-                aria-controls="nav-{{ row[0] }}" aria-selected="true">Tahun {{ row[1] }}</button>
+                aria-controls="nav-{{ row[0] }}" aria-selected="true"><span class="fw-bold">Tahun
+                    {{ row[1] }}</span></button>
             {% endfor %}
         </div>
     </nav>
@@ -107,7 +108,7 @@
                         </div>
                     </h5>
                     <div class="card-body d-flex justify-content-center align-items-center">
-                        <img src="{{ url_for('static', filename='pemetaan/' ~ 'download (4).png') }}" class="img-fluid">
+                        <img src="{{ url_for('static', filename='pemetaan/' ~ row[4]) }}" class="img-fluid">
                     </div>
                 </div>
 
