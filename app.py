@@ -479,32 +479,4 @@ def hasil_cluster():
             """, (header[2],))
         clustering_content[header[2]] = cursor.fetchall()
 
-    #hasil akhir
-    cursor.execute("""
-        SELECT 
-            dts.tahun,
-            dts_c.kabupaten_kota,
-            cls_c.keterangan AS keterangan_cluster
-        FROM 
-            dataset dts
-        JOIN 
-            dataset_content dts_c ON dts.id = dts_c.id_dataset
-        JOIN 
-            clustering cls ON cls.id_dataset = dts.id
-        JOIN 
-            clustering_content cls_c ON cls_c.id_clustering = cls.id AND cls_c.id_dataset_content = dts_c.id
-        ORDER BY 
-            dts.tahun, dts_c.kabupaten_kota;
-        """)
-    datacluster = cursor.fetchall()
-
-     # Convert data to DataFrame
-    df = pd.DataFrame(datacluster, columns=['tahun', 'kabupaten_kota', 'keterangan'])
-    
-    # Pivot the DataFrame
-    df_pivot = df.pivot(index='kabupaten_kota', columns='tahun', values='keterangan')
-    
-    # Reset index to make kabupaten_kota a column again
-    df_pivot.reset_index(inplace=True)
-
-    return render_template("hasil-cluster.html", cls=clustering, cls_c=clustering_content, data=df_pivot.to_dict(orient='records'), columns=df_pivot.columns)
+    return render_template("hasil-cluster.html", cls=clustering, cls_c=clustering_content)
