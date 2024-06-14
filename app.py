@@ -30,6 +30,9 @@ app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 mysql.init_app(app)
 conn = mysql.connect()
 
+# Set Matplotlib backend ke 'Agg'
+plt.switch_backend('Agg')
+
 # Define routes
 @app.route('/')
 def index():
@@ -372,6 +375,77 @@ def clustering_korelasi(id_dataset):
         conn.rollback()
         return jsonify({'error': str(e)}), 400
 
+def generate_pemetaan(clusters, kabupaten_kota, _id_clustering):
+    # Baca file GeoJSON atau shapefile dari Jawa Timur
+    db = gpd.read_file('static/shp_jatim/Jawa_Timur_ADMIN_BPS.shp')
+
+    # Buat DataFrame dari kabupaten_kota dan clusters
+    df = pd.DataFrame({
+        'kabupaten_kota': kabupaten_kota,
+        'Cluster': clusters
+    })
+
+    # Ubah nama kolom 'kabupaten_kota' di df menjadi 'Kabupaten' agar sesuai dengan db
+    df.rename(columns={'kabupaten_kota': 'Kabupaten'}, inplace=True)
+    
+    # Gabungkan db dan df berdasarkan kolom 'Kabupaten'
+    db = db.merge(df, on='Kabupaten')
+    
+    # Set up figure and ax
+    f, ax = plt.subplots(1, figsize=(12, 9))
+    
+    # Plot unique values choropleth including a legend and with no boundary lines
+    db.plot(column="Cluster", categorical=True, legend=True, linewidth=0.1, edgecolor='black', ax=ax, cmap="Set3")
+    
+    # Annotate kabupaten names
+    for idx, row in db.iterrows():
+        x, y = row['geometry'].centroid.coords[0]
+        offset = {
+            'Madiun': (0, -0.06),
+            'Kota Madiun': (0, 0.02),
+            'Blitar': (0, -0.07),
+            'Jombang': (0, -0.08),
+            'Kota Mojokerto': (0, 0.02),
+            'Sidoarjo': (0, -0.05),
+            'Kediri': (0.08, -0.08),
+            'Sumenep': (-0.5, 0),
+            'Sampang': (0, 0.05),
+            'Situbondo': (0, 0.07),
+            'Kota Blitar': (0, 0.02)
+        }
+        dx, dy = offset.get(row['Kabupaten'], (0, 0))
+        plt.annotate(text=row['Kabupaten'], xy=(x + dx, y + dy), color='black', fontsize=7, ha='center')
+    
+    # Ubah label keterangan warna pada legenda
+    legend = ax.get_legend()
+    legend.set_title("Cluster")
+    for label in legend.get_texts():
+        label.set_text("Cluster " + label.get_text())
+        
+    # Remove axis
+    ax.set_axis_off()
+    
+    # Atur batas plot
+    xmin, xmax = ax.get_xlim()
+    ymin, ymax = ax.get_ylim()
+
+    ax.set_xlim(xmin, xmax - 0.08 * (xmax - xmin))
+    ax.set_ylim(ymin, ymax - 0.15 * (ymax - ymin))
+
+    # Tambahkan padding untuk menghindari label yang terpotong
+    plt.tight_layout()
+    plt.subplots_adjust(bottom=0.3)
+    
+    # Simpan dendogram
+    date_str = datetime.now().strftime('%Y%m%d')
+    filename = f"pemetaan-{date_str}-{_id_clustering}.jpg"
+    save_path = os.path.join('static', 'pemetaan', filename)
+    os.makedirs(os.path.dirname(save_path), exist_ok=True)
+    plt.savefig(save_path, format='png', bbox_inches='tight')
+    plt.close()
+    
+    return filename
+
 @app.route('/clustering_jumlah/', methods=['POST'])
 def clustering_jumlah():
     try:
@@ -401,8 +475,9 @@ def clustering_jumlah():
         SI = round(float(silhouette_score(df_numeric, clusters)), 4)
 
         if SI > 0.1:
+            pemetaan = generate_pemetaan(clusters, df['kabupaten_kota'].values, _id_clustering)
             # Menyimpan hasil clustering ke dalam database
-            cursor.execute("UPDATE clustering SET total_cluster=%s, silhouette_score=%s WHERE id=%s", (_jum, SI, _id_clustering))
+            cursor.execute("UPDATE clustering SET total_cluster=%s, silhouette_score=%s, pemetaan=%s WHERE id=%s", (_jum, SI,pemetaan, _id_clustering))
             conn.commit()
             cursor.execute("DELETE FROM clustering_content WHERE id_clustering=%s", (_id_clustering))
             conn.commit()
@@ -455,7 +530,7 @@ def hapus_clustering(id_clustering):
 def hasil_cluster():
     cursor = conn.cursor()
     # hasil per tahun
-    cursor.execute("SELECT dts.id AS dataset_id, dts.tahun, cls.id AS clustering_id, cls.total_cluster FROM clustering cls JOIN dataset dts ON cls.id_dataset = dts.id ORDER BY dts.tahun ASC",)
+    cursor.execute("SELECT dts.id AS dataset_id, dts.tahun, cls.id AS clustering_id, cls.total_cluster, cls.pemetaan FROM clustering cls JOIN dataset dts ON cls.id_dataset = dts.id ORDER BY dts.tahun ASC",)
     clustering = cursor.fetchall()
 
     clustering_content = {}
