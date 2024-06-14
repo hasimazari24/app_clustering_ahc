@@ -15,7 +15,8 @@
             {% for row in cls %}
             <button class="nav-link {% if loop.index == 1 %} active {% endif %}" id="nav-{{ row[0] }}-tab"
                 data-bs-toggle="tab" data-bs-target="#nav-{{ row[0] }}" type="button" role="tab"
-                aria-controls="nav-{{ row[0] }}" aria-selected="true">Tahun {{ row[1] }}</button>
+                aria-controls="nav-{{ row[0] }}" aria-selected="true"><span class="fw-bold">Tahun
+                    {{ row[1] }}</span></button>
             {% endfor %}
         </div>
     </nav>
@@ -382,7 +383,7 @@
                     );
                     $('#messageModal').find('.modal-body').text(response.message);
                     $('#messageModal').find('.modal-footer').html(
-                        '<button type="button" class="btn btn-success" data-dismiss="modal" onclick="location.reload();">OK</button>'
+                        '<button type="button" class="btn btn-success" data-bs-dismiss="modal">OK</button>'
                     );
                     $('#messageModal').modal('show');
                 },
