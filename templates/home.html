@@ -4,6 +4,32 @@
 
 {% block content %}
 
+<style>
+    @media (max-width: 767.98px) {
+        .imagepost-right {
+            border-top-left-radius: var(--bs-border-radius) !important;
+            border-top-right-radius: var(--bs-border-radius) !important;
+        }
+
+        .imagepost-left {
+            border-top-left-radius: var(--bs-border-radius) !important;
+            border-top-right-radius: var(--bs-border-radius) !important;
+        }
+    }
+
+    @media (min-width: 768px) {
+        .imagepost-right {
+            border-top-right-radius: var(--bs-border-radius) !important;
+            border-bottom-right-radius: var(--bs-border-radius) !important;
+        }
+
+        .imagepost-left {
+            border-top-left-radius: var(--bs-border-radius) !important;
+            border-bottom-left-radius: var(--bs-border-radius) !important;
+        }
+    }
+</style>
+
 <div class="container">
     <div class="row flex-lg align-items-center g-5 py-5">
         <div class="col-10 col-sm-8 col-lg-6 mr-3">
@@ -26,17 +52,27 @@
         </div>
     </div>
 </div>
-<div style="background-color: aquamarine;">
-    <div class="container py-3">
-        <div class="row flex-lg align-items-center">
-            <p class="fs-4"><i class="bi bi-graph-up-arrow fs-5"></i> Visualisasi Persebaran Data</p>
-            <p class="fs-4"><i class="bi bi-info-circle fs-5"></i> Keterangan :</p>
-            <!-- Tag satu baris -->
-            <div class="col">
-                <div class="d-flex flex-wrap">
-                    <div class="border border-secondary text-default p-2 me-2 mb-2 rounded">
-                        <span class="badge bg-primary text-white">1</span>
-                        <span class="ms-1">Kota Surabaya</span>
+<div style="background-color: rgb(255, 255, 255);">
+    <div class="container">
+        <div class="card mb-3">
+            <div class="row g-0">
+                <div class="col-md-4 order-md-last order-first">
+                    <img src="{{ url_for('static', filename='data-mining.jpg') }}" class="img-fluid imagepost-right"
+                        alt="Data-Mining">
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <h2 class="card-title mb-3">Sekilas tentang <span style="color:darkcyan;">Data
+                                Mining</span>
+                        </h2>
+                        <p class="card-text">Data mining adalah proses menemukan pola, hubungan, dan wawasan yang
+                            bermakna dari sekumpulan data. Salah satu metode dalam data mining adalah Agglomerative
+                            Hierarchical Clustering (AHC). Metode ini mampu memberikan analisis cluster yang mendalam
+                            dan akurat
+                            tentang produksi padi dan beras, sehingga membantu mengidentifikasi pola dan dapat menjadi
+                            acuan untuk mengoptimalkan hasil
+                            produksi padi dan beras</p>
+                        <!-- <p class="card-text"><small class="text-body-secondary">Last updated 3 mins ago</small></p> -->
                     </div>
                 </div>
             </div>
@@ -45,9 +81,30 @@
 </div>
 
 
-<!-- <div> -->
-
-<!-- </div> -->
+<div class="mb-3">
+    <div class="container">
+        <div class="card mb-3">
+            <div class="row g-0">
+                <div class="col-md-4 order-md-first order-last">
+                    <img src="{{ url_for('static', filename='padi-beras.jpg') }}" class="img-fluid imagepost-left"
+                        alt="Padi-Beras">
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <h2 class="card-title mb-3">Tanaman Pangan Utama <span style="color: darkgoldenrod;">Padi dan
+                                Beras</span></h2>
+                        <p class="card-text">Padi adalah tanaman utama yang menghasilkan beras, makanan pokok bagi
+                            sebagian besar masyarakat Indonesia. Karena itu, beras menjadi hasil pangan yang
+                            paling banyak dikonsumsi di Indonesia. Pengelompokan daerah penghasil padi penting untuk
+                            mengetahui potensi produksi dan daerah yang memerlukan peningkatan, sehingga membantu
+                            menentukan prioritas kebijakan untuk meningkatkan hasil produksi dan menyediakan
+                            infrastruktur yang mendukung kebutuhan pangan bagi masyarakat. </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 {% endblock %}
