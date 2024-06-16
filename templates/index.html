@@ -27,15 +27,14 @@
                     </a>
 
                     <ul class="nav col-12 col-lg-auto my-2 justify-content-center my-md-0 text-small">
-                        <li>
+                        <li class="nav-item dropdown">
                             <a href="/" class="nav-link text-white d-flex flex-column align-items-center">
                                 <i class="bi bi-house-door fs-5"></i>
                                 <span class="mx-auto">Beranda</span>
                             </a>
-
                         </li>
                         {% if session['logged_in'] %}
-                        <li>
+                        <li class="nav-item dropdown">
                             <a href="#"
                                 class="nav-link dropdown-toggle text-white d-flex flex-column align-items-center"
                                 id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown"
@@ -65,33 +64,33 @@
                             </ul>
                         </li>
                         {% else %}
-                        <li>
+                        <li class="nav-item dropdown">
                             <a class="nav-link text-white d-flex flex-column align-items-center" href="/dataset">
                                 <i class="bi bi-database-gear fs-5"></i>
                                 <span>Dataset</span>
                             </a>
                         </li>
                         {% endif %}
-                        <li>
+                        <li class="nav-item dropdown">
                             <a class="nav-link text-white d-flex flex-column align-items-center" href="/hasil-cluster">
                                 <i class="bi bi-grid-3x3 fs-5"></i>
                                 <span>Hasil Cluster</span>
                             </a>
                         </li>
-                        <li>
+                        <li class="nav-item dropdown">
                             <a href="/about" class="nav-link text-white d-flex flex-column align-items-center">
                                 <i class="bi bi-info-square fs-5"></i>
                                 <span class="mx-auto">About</span>
                             </a>
                         </li>
                         {% if session['logged_in'] %}
-                        <li>
+                        <li class="nav-item dropdown">
                             <a href="#"
                                 class="nav-link dropdown-toggle text-white d-flex flex-column align-items-center"
                                 id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown"
                                 aria-expanded="false">
                                 <i class="bi bi-person-circle fs-5"></i>
-                                <span class="mx-auto">Admin</span>
+                                <span>Admin</span>
                             </a>
                             <ul class="dropdown-menu justify-content-center" aria-labelledby="navbarDropdownMenuLink">
                                 <li>

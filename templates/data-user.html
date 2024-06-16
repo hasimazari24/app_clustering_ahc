@@ -4,15 +4,14 @@
 
 {% block content %}
 
-<div class="mt-3">
-    <h1 class="display-5 fw-bold">Data User</h1>
-    <!-- Tampilkan tombol hapus data -->
-    <button type="button" class="btn btn-success" id="tambah-user" data-bs-toggle="modal" data-bs-target="#addModal">
-        <i class="bi bi-plus-square"></i>
-        <span>
-            Tambah User
-        </span>
-    </button>
+<div class="container py-3">
+    <div class="d-flex align-items-center">
+        <h1 class="fw-bold me-3">Data User</h1>
+        <button type="button" class="btn btn-success" id="tambah-user" data-bs-toggle="modal"
+            data-bs-target="#addModal">
+            <i class="bi bi-plus-square"></i>
+        </button>
+    </div>
 
     <hr>
 
@@ -31,8 +30,8 @@
             <tr>
                 <td>{{ loop.index }}</td> <!-- loop.index memberikan nomor urutan dari 1 hingga n -->
                 <td>{{ row[1] }}</td>
-                <td>{{ row[3] }}</td>
                 <td>{{ row[4] }}</td>
+                <td>{{ row[3] }}</td>
                 <td>
                     <button class="btn btn-primary btn-edit btn-sm" data-id="{{ row[0] }}" data-bs-toggle="modal"
                         data-bs-target="#editModal"><i class="bi bi-pencil-square"></i></button>
@@ -228,8 +227,8 @@
                     var userData = response.user;
                     $('#editUserId').val(userData[0]);
                     $('#editUsername').val(userData[1]);
-                    $('#editEmail').val(userData[3]);
-                    $('#editFullname').val(userData[4]);
+                    $('#editEmail').val(userData[4]);
+                    $('#editFullname').val(userData[3]);
                 },
                 error: function (xhr, status, error) {
                     console.error(error);
