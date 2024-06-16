@@ -277,32 +277,35 @@ def editdataset(_id):
 
 @app.route('/clustering')
 def clustering():
-    cursor = conn.cursor()
-    cursor.execute("SELECT dts.id AS dataset_id, dts.tahun, cls.id AS clustering_id, cls.total_cluster, cls.algorithm, cls.dendogram, cls.silhouette_score FROM dataset dts LEFT JOIN clustering cls ON cls.id_dataset = dts.id ORDER BY dts.tahun ASC",)
-    clustering = cursor.fetchall()
+    if not session.get("logged_in") :
+        return render_template("notfound.html")
+    else :
+        cursor = conn.cursor()
+        cursor.execute("SELECT dts.id AS dataset_id, dts.tahun, cls.id AS clustering_id, cls.total_cluster, cls.algorithm, cls.dendogram, cls.silhouette_score FROM dataset dts LEFT JOIN clustering cls ON cls.id_dataset = dts.id ORDER BY dts.tahun ASC",)
+        clustering = cursor.fetchall()
 
-    clustering_content = {}
-    for header in clustering:
-        cursor.execute("""
-            SELECT 
-                cls_c.cluster, 
-                GROUP_CONCAT(dts_c.kabupaten_kota SEPARATOR ', ') AS anggota_cluster, 
-                COUNT(*) AS jumlah_anggota, 
-                ROUND(AVG(dts_c.produksi_padi), 2) AS rata_padi, 
-                ROUND(AVG(dts_c.produksi_beras), 2) AS rata_beras, 
-                cls_c.keterangan 
-            FROM 
-                clustering_content cls_c 
-            JOIN 
-                dataset_content dts_c ON dts_c.id = cls_c.id_dataset_content 
-            WHERE 
-                cls_c.id_clustering = %s 
-            GROUP BY 
-                cls_c.cluster;
-            """, (header[2],))
-        clustering_content[header[2]] = cursor.fetchall()
+        clustering_content = {}
+        for header in clustering:
+            cursor.execute("""
+                SELECT 
+                    cls_c.cluster, 
+                    GROUP_CONCAT(dts_c.kabupaten_kota SEPARATOR ', ') AS anggota_cluster, 
+                    COUNT(*) AS jumlah_anggota, 
+                    ROUND(AVG(dts_c.produksi_padi), 2) AS rata_padi, 
+                    ROUND(AVG(dts_c.produksi_beras), 2) AS rata_beras, 
+                    cls_c.keterangan 
+                FROM 
+                    clustering_content cls_c 
+                JOIN 
+                    dataset_content dts_c ON dts_c.id = cls_c.id_dataset_content 
+                WHERE 
+                    cls_c.id_clustering = %s 
+                GROUP BY 
+                    cls_c.cluster;
+                """, (header[2],))
+            clustering_content[header[2]] = cursor.fetchall()
 
-    return render_template("clustering.html", cls=clustering, cls_c=clustering_content)
+        return render_template("clustering.html", cls=clustering, cls_c=clustering_content)
 
 @app.route('/clustering_korelasi/<id_dataset>', methods=['POST'])
 def clustering_korelasi(id_dataset):
@@ -555,3 +558,7 @@ def hasil_cluster():
         clustering_content[header[2]] = cursor.fetchall()
 
     return render_template("hasil-cluster.html", cls=clustering, cls_c=clustering_content)
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('notfound.html'), 404
