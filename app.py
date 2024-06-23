@@ -38,6 +38,10 @@ plt.switch_backend('Agg')
 def index():
     return render_template('home.html')
 
+@app.route('/about')
+def aboutme():
+    return render_template('about.html')
+
 @app.route('/login', methods=['POST', 'GET'])
 def login():
     try:
@@ -108,7 +112,7 @@ def adduser():
             cursor.execute("INSERT INTO users(username, password, email, fullname) VALUES (%s, %s, %s, %s)", (_username, passhashed, _email, _fullname))
             conn.commit()
             cursor.close()
-            return jsonify({'message': 'Berhasil menambhkan user baru'}), 200
+            return jsonify({'message': 'Berhasil menambahkan user baru'}), 200
         else :
             return jsonify({'error':'Username atau Email sudah digunakan user lain!'}), 400
     except Exception as e:
@@ -236,7 +240,7 @@ def hapus_data(id_dataset):
     cursor = conn.cursor()
 
     # Memeriksa apakah dataset sudah digunakan dalam clustering
-    cursor.execute("SELECT COUNT(*) FROM clustering WHERE id=%s", id_dataset)
+    cursor.execute("SELECT COUNT(*) FROM clustering WHERE id_dataset=%s", id_dataset)
     row_count = cursor.fetchone()[0]
 
     if row_count == 0:

@@ -20,7 +20,8 @@
             {% for row in dts %}
             <button class="nav-link {% if loop.index == 1 %} active {% endif %}" id="nav-{{ row[0] }}-tab"
                 data-bs-toggle="tab" data-bs-target="#nav-{{ row[0] }}" type="button" role="tab"
-                aria-controls="nav-{{ row[0] }}" aria-selected="true">Tahun {{ row[1] }}</button>
+                aria-controls="nav-{{ row[0] }}" aria-selected="true"><span class="fw-bold">Tahun
+                    {{ row[1] }}</span></button>
             {% endfor %}
         </div>
     </nav>
@@ -107,7 +108,7 @@
                         </div>
                         <div class="form-group mb-3">
                             <label for="sumber">Keterangan</label>
-                            <input type="text" class="form-control" id="keterangan" name="keterangan" required>
+                            <input type="text" class="form-control" id="keterangan" name="keterangan">
                         </div>
                         <div class="form-group">
                             <label for="file">Pilih file CSV</label>
@@ -151,7 +152,7 @@
                         </div>
                         <div class="form-group mb-2">
                             <label for="sumber">Keterangan</label>
-                            <input type="text" class="form-control editKeterangan" required>
+                            <input type="text" class="form-control editKeterangan">
                         </div>
 
                     </div>

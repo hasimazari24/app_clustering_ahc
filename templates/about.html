@@ -4,9 +4,63 @@
 
 {% block content %}
 
-<div class="mt-3">
-    <h1 class="display-5 fw-bold">About</h1>
+<div class="container py-3">
+    <div class="d-flex align-items-center">
+        <h1 class="fw-bold me-3">About</h1>
+    </div>
 
+    <hr>
+    <div class="row g-2">
+        <div class="col-md-8">
+            <div class="h-100 p-4 text-white bg-dark rounded-3">
+                <div class="dropdown-item d-flex gap-3 text-wrap mb-2">
+                    <span class="bg-primary rounded-circle d-inline-block mt-2"
+                        style="width: .5em; height: .5em; min-width: .5em; min-height: .5em;"></span>
+                    <span style="text-align: justify;"><b>Sistem Pengelompokan Padi dan Beras </b>merupakan hasil
+                        penerapan
+                        metode
+                        Agglomerative Hierarchical
+                        Clustering yang digunakan untuk mengelompokkan wilayah-wilayah penghasil padi di Provinsi Jawa
+                        Timur.</span>
+                </div>
+                <div class="dropdown-item d-flex gap-3 text-wrap mb-2">
+                    <span class="bg-primary rounded-circle d-inline-block mt-2"
+                        style="width: .5em; height: .5em; min-width: .5em; min-height: .5em;"></span>
+                    <span style="text-align: justify;"><b>Jenis data </b>yang digunakan merupakan data
+                        sekunder yang diperoleh dari sumber data seperti Badan Pusat Statistik (BPS).</span>
+                </div>
+                <div class="dropdown-item d-flex gap-3 text-wrap">
+                    <span class="bg-primary rounded-circle d-inline-block mt-2"
+                        style="width: .5em; height: .5em; min-width: .5em; min-height: .5em;"></span>
+                    <span style="text-align: justify;"><b>Tujuan Sistem :</b></span>
+                </div>
+                <ol style="padding-left: 43px;text-align: justify;">
+                    <li>Melengkapi persyaratan menyelesaikan Pendidikan Program Strata 1 Program Studi Teknik
+                        Informatika
+                    </li>
+                    <li>Memberikan informasi atau acuan dalam optimalisasi hasil produksi padi dan beras
+                        di daerah Jawa Timur yang dikelompokkan dalam sejumlah klaster.</li>
+                </ol>
+            </div>
+        </div>
+        <div class="col-md-4 mx-auto">
+            <div class="h-100 p-4 bg-light border rounded-3">
+                <div class="dropdown-item d-flex gap-3 text-wrap">
+                    <span class="bg-primary rounded-circle d-inline-block mt-2"
+                        style="width: .5em; height: .5em; min-width: .5em; min-height: .5em;"></span>
+                    <span class="align-self-center"><b>Dikembangkan Oleh :</b></span>
+                </div>
+                <div class="text-center mt-3">
+                    <img src="{{ url_for('static', filename='profile-img.jpg') }}" class="rounded-circle"
+                        style="width: 120px; height: 120px;">
+                    <h5 class="mt-2">Hasim Azari</h5>
+                    <p>S1-Teknik Informatika
+                        <br>Universitas Duta Bangsa Surakarta</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </div>
 
 {% endblock %}
